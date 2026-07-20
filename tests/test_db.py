@@ -66,3 +66,11 @@ def test_arcade_best_and_bests(db):
     db.record_arcade_score("folk", 900, 8)
     assert db.get_arcade_best("island") == 1800
     assert db.get_arcade_bests() == {"island": 1800, "folk": 900}
+
+
+def test_song_completion(db):
+    assert db.get_completed_songs() == set()
+    db.mark_song_completed("twinkle")
+    db.mark_song_completed("twinkle")  # idempotent
+    db.mark_song_completed("saints")
+    assert db.get_completed_songs() == {"twinkle", "saints"}

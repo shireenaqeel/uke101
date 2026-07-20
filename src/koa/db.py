@@ -54,6 +54,14 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS songs_completed (
+                song_id      TEXT PRIMARY KEY,
+                completed_at TEXT NOT NULL DEFAULT (datetime('now'))
+            )
+            """
+        )
 
 
 def mark_learned(chord_id: str) -> None:
@@ -142,3 +150,16 @@ def get_arcade_bests() -> dict[str, int]:
             "SELECT pattern_id, MAX(score) AS best FROM arcade_scores GROUP BY pattern_id"
         ).fetchall()
         return {row["pattern_id"]: row["best"] for row in rows}
+
+
+def mark_song_completed(song_id: str) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO songs_completed (song_id) VALUES (?)", (song_id,)
+        )
+
+
+def get_completed_songs() -> set[str]:
+    with _connect() as conn:
+        rows = conn.execute("SELECT song_id FROM songs_completed").fetchall()
+        return {row["song_id"] for row in rows}

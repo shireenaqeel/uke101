@@ -56,6 +56,7 @@ pytest
 - **Chord Switching Trainer** — metronome (adjustable tempo + click), timed switch test over preset beginner pairs / 3- and 4-chord loops (or any custom pair), counts clean switches via tap or spacebar, and tracks the best switch count per drill across sessions.
 - **Strumming Pattern Trainer** — six named patterns shown as a down/up/rest beat grid, play-along at adjustable tempo with the current beat highlighted and the chosen chord strummed on each stroke.
 - **Strum Arcade** — a scored rhythm game over any pattern: tap in time with each stroke (Space or button), judged Perfect/Good/Miss with a combo multiplier and per-pattern high scores.
-- **Progress Dashboard** — chords learned, best switch speeds per drill, arcade high scores, and available patterns, all populated from real stored data.
+- **Song Mode** — play a real song end to end: lyrics and chord changes scroll in time with the tempo, the current line is highlighted, and the current chord's diagram shows on the side. Ships public-domain songs with full lyrics plus copyrighted starters as chord-chart-only (progression + link out, no verbatim lyrics). Completed songs are tracked.
+- **Progress Dashboard** — chords learned, best switch speeds per drill, arcade high scores, songs completed, and available patterns, all populated from real stored data.
 
-45 tests passing. Next: Phase 5 (Song Mode). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.
+52 tests passing. Next: Phase 6 (Song Composer). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.

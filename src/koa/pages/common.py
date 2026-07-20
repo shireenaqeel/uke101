@@ -5,6 +5,7 @@ _NAV = [
     ("Switching Trainer", "/switching"),
     ("Strumming Trainer", "/strumming"),
     ("Strum Arcade", "/arcade"),
+    ("Songs", "/songs"),
     ("Dashboard", "/dashboard"),
 ]
 

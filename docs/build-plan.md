@@ -11,8 +11,8 @@ Each phase is a shippable checkpoint. We confirm a phase works before starting t
 | 2 | Chord Switching Trainer: metronome engine, 2-chord drills, switch-speed tracking per pair | ✅ done |
 | 3 | Strumming Pattern Trainer + Progress Dashboard | ✅ done |
 | 4 | Strum Arcade (scored rhythm game) | ✅ done |
-| 5 | Song Mode (scrolling lyrics + synced chords) | ⬜ next |
-| 6 | Song Composer | ⬜ |
+| 5 | Song Mode (scrolling lyrics + synced chords) | ✅ done |
+| 6 | Song Composer | ⬜ next |
 | 7 | Notation Reading Track | ⬜ |
 | 8 | Gamification (XP, levels, streaks, badges) | ⬜ |
 | 9 | Adaptive Difficulty (ML, no audio) | ⬜ |

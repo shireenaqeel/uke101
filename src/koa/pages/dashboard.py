@@ -4,6 +4,7 @@ from koa import db
 from koa.data.chords import CHORDS
 from koa.data.drills import drill_labels
 from koa.data.patterns import PATTERNS_BY_ID, STRUMMING_PATTERNS
+from koa.data.songs import SONGS, SONGS_BY_ID
 from koa.pages.common import page_header
 
 
@@ -13,6 +14,7 @@ def build_dashboard() -> None:
     learned = db.get_learned()
     switch_bests = db.get_switch_bests()
     arcade_bests = db.get_arcade_bests()
+    completed_songs = db.get_completed_songs()
     labels = drill_labels()
 
     with ui.column().classes("w-full max-w-4xl mx-auto items-stretch gap-6 p-6"):
@@ -79,6 +81,21 @@ def build_dashboard() -> None:
                 ).classes("w-full")
             else:
                 ui.label("No arcade scores yet — play the Strum Arcade to set one.").classes(
+                    "text-gray-500"
+                )
+
+        # --- songs completed -------------------------------------------------
+        with ui.card().classes("w-full gap-3"):
+            with ui.row().classes("w-full items-baseline justify-between"):
+                ui.label("Songs completed").classes("text-xl font-semibold")
+                ui.label(f"{len(completed_songs)} / {len(SONGS)}").classes("text-lg text-primary")
+            if completed_songs:
+                with ui.row().classes("gap-2 flex-wrap"):
+                    for sid in completed_songs:
+                        title = SONGS_BY_ID[sid]["title"] if sid in SONGS_BY_ID else sid
+                        ui.badge(title, color="green")
+            else:
+                ui.label("No songs completed yet — play one end to end in Song Mode.").classes(
                     "text-gray-500"
                 )
 
