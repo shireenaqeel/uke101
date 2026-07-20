@@ -55,6 +55,9 @@ h1, h2, h3, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl {
 }
 .koa-tile:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(60,70,80,.20); }
 .koa-tile .koa-emoji { font-size: 34px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,.15)); }
+
+.koala-bob { animation: koala-bob 3.4s ease-in-out infinite; filter: drop-shadow(0 8px 12px rgba(78,110,142,.18)); }
+@keyframes koala-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 """
 
 

@@ -3,6 +3,7 @@ from nicegui import ui
 from koa import db, gamification
 from koa.ml import adaptive
 from koa.pages.common import page_header
+from koa.pages.mascot import koala_svg
 
 # (title, subtitle, emoji, path, gradient) — muted, cozy beige/blue tones
 _TILES = [
@@ -46,8 +47,9 @@ def build_home() -> None:
     learned = db.get_learned()
 
     with ui.column().classes("w-full max-w-6xl mx-auto items-center gap-6 p-6"):
-        ui.label("🐨 Ukoala").classes("koa-brand text-6xl")
-        ui.label(_greeting(streak)).classes("text-gray-500 text-lg -mt-2 text-center")
+        ui.html(koala_svg(170)).classes("koala-bob")
+        ui.label("Ukoala").classes("koa-brand text-6xl -mt-2")
+        ui.label(_greeting(streak)).classes("text-gray-500 text-lg -mt-1 text-center")
 
         # HUD -----------------------------------------------------------------
         with ui.card().classes("w-full max-w-3xl gap-3 p-5"):
