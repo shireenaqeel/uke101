@@ -3,7 +3,8 @@ from html import escape
 
 from nicegui import ui
 
-from koa import db, gamification, songbook
+from koa import db, songbook
+from koa.pages import fx
 from koa.data.chords import get_chord
 from koa.data.songs import cumulative_times, primary_line_chords
 from koa.fretboard import render_fretboard
@@ -232,7 +233,7 @@ def build_song_player(song_id: str) -> None:
     def _complete() -> None:
         if song["id"] not in db.get_completed_songs():
             db.mark_song_completed(song["id"])
-            gamification.record_activity("song")
+            fx.award("song")
 
     def finish() -> None:
         stop()

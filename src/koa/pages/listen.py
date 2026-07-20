@@ -4,8 +4,8 @@ import json
 import numpy as np
 from nicegui import ui
 
-from koa import gamification
 from koa.data.chords import CHORDS, get_chord
+from koa.pages import fx
 from koa.fretboard import render_fretboard
 from koa.ml.recognition import get_recognizer
 from koa.pages.common import page_header
@@ -110,7 +110,7 @@ def build_listen() -> None:
         if pred == state["target"]:
             verdict.text = f"Correct! ({conf * 100:0.0f}% sure)"
             verdict.style("color: #16a34a")
-            gamification.record_activity("ear_practice")
+            fx.award("ear_practice")
         else:
             verdict.text = f"Sounded like {pred} — aim for {state['target']}"
             verdict.style("color: #dc2626")

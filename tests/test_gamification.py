@@ -1,7 +1,10 @@
+import importlib
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+import pytest
 
 from koa import gamification
 
@@ -47,3 +50,29 @@ def test_no_badges_when_empty():
     empty = {k: 0 for k in ["learned", "switch_best", "arcade_best", "songs",
                             "composed", "notation", "streak"]}
     assert gamification.earned_badge_ids(empty) == set()
+
+
+@pytest.fixture
+def gami(tmp_path, monkeypatch):
+    monkeypatch.setenv("KOA_DB_PATH", str(tmp_path / "test.db"))
+    from koa import db as db_module
+
+    importlib.reload(db_module)
+    importlib.reload(gamification)
+    db_module.init_db()
+    return gamification, db_module
+
+
+def test_award_reports_xp(gami):
+    gm, db = gami
+    result = gm.award("song")  # song = 30 xp
+    assert result["xp"] == 30
+    assert db.get_total_xp() == 30
+
+
+def test_award_detects_new_badge(gami):
+    gm, db = gami
+    db.mark_learned("C")  # earns "first_chord"
+    result = gm.award("chord_learned")
+    ids = {b["id"] for b in result["new_badges"]}
+    assert "first_chord" in ids

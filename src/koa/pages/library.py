@@ -1,8 +1,9 @@
 from nicegui import app, ui
 from starlette.responses import Response
 
-from koa import db, gamification
+from koa import db
 from koa.audio import synth
+from koa.pages import fx
 from koa.data.chords import CHORDS, fingering_text, get_chord
 from koa.fretboard import render_fretboard
 from koa.pages.common import page_header
@@ -63,7 +64,7 @@ def build_library() -> None:
                 newly = chord_id not in db.get_learned()
                 db.mark_learned(chord_id)
                 if newly:
-                    gamification.record_activity("chord_learned")
+                    fx.award("chord_learned")
             else:
                 db.unmark_learned(chord_id)
             refresh_counter()

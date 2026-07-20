@@ -4,19 +4,27 @@ from koa import db, gamification
 from koa.ml import adaptive
 from koa.pages.common import page_header
 
-# (title, subtitle, emoji, path, gradient)
+# (title, subtitle, emoji, path, gradient) — muted, cozy beige/blue tones
 _TILES = [
-    ("Chord Library", "Learn every chord", "🎸", "/library", "linear-gradient(135deg,#7C5CFF,#5B8DEF)"),
-    ("Coach", "What to practise next", "🧭", "/coach", "linear-gradient(135deg,#00C2A8,#00A3FF)"),
-    ("Switching", "Change chords fast", "🔀", "/switching", "linear-gradient(135deg,#5B8DEF,#7C5CFF)"),
-    ("Strumming", "Lock in the rhythm", "🎵", "/strumming", "linear-gradient(135deg,#FF8A00,#FF5CA8)"),
-    ("Strum Arcade", "Score, combo, win", "🕹️", "/arcade", "linear-gradient(135deg,#FF5CA8,#FF3D77)"),
-    ("Songs", "Play real songs", "🎶", "/songs", "linear-gradient(135deg,#22C55E,#00C2A8)"),
-    ("Ear Trainer", "The app listens", "👂", "/listen", "linear-gradient(135deg,#8B5CF6,#6366F1)"),
-    ("Compose", "Write your own", "✍️", "/composer", "linear-gradient(135deg,#F43F5E,#FB7185)"),
-    ("Notation", "Read the dots", "🎼", "/notation", "linear-gradient(135deg,#475569,#64748B)"),
-    ("Dashboard", "Your progress", "🏆", "/dashboard", "linear-gradient(135deg,#F59E0B,#FBBF24)"),
+    ("Chord Library", "Learn every chord", "🎸", "/library", "linear-gradient(135deg,#4E6E8E,#6E8CA8)"),
+    ("Coach", "What to practise next", "🧭", "/coach", "linear-gradient(135deg,#6E9488,#8FA68C)"),
+    ("Switching", "Change chords smoothly", "🔀", "/switching", "linear-gradient(135deg,#5E7C9E,#7E8FB0)"),
+    ("Strumming", "Find your rhythm", "🪕", "/strumming", "linear-gradient(135deg,#C79A5B,#D9B36A)"),
+    ("Strum Arcade", "Score, combo, win", "🕹️", "/arcade", "linear-gradient(135deg,#B07C7C,#C89A8C)"),
+    ("Songs", "Play real songs", "🎶", "/songs", "linear-gradient(135deg,#7E9A72,#9AAE84)"),
+    ("Ear Trainer", "The app listens", "👂", "/listen", "linear-gradient(135deg,#7C7EA6,#9490B0)"),
+    ("Compose", "Write your own", "✍️", "/composer", "linear-gradient(135deg,#C08C6A,#D2A57C)"),
+    ("Notation", "Read the dots", "🎼", "/notation", "linear-gradient(135deg,#8E8272,#A2937E)"),
+    ("Dashboard", "Your progress", "🏆", "/dashboard", "linear-gradient(135deg,#C9A349,#D9B36A)"),
 ]
+
+
+def _greeting(streak: int) -> str:
+    if streak >= 7:
+        return "You're on fire this week 🔥 Welcome back, superstar!"
+    if streak >= 1:
+        return f"Lovely to see you again — {streak} day streak and counting ☕"
+    return "Grab your uke and get cosy — let's play something today ☕"
 
 
 def _tile(title: str, subtitle: str, emoji: str, path: str, gradient: str) -> None:
@@ -38,10 +46,8 @@ def build_home() -> None:
     learned = db.get_learned()
 
     with ui.column().classes("w-full max-w-6xl mx-auto items-center gap-6 p-6"):
-        ui.label("Koa").classes("koa-brand text-6xl")
-        ui.label("Learn ukulele the fun way — chords, games, songs, and more.").classes(
-            "text-gray-500 text-lg -mt-2"
-        )
+        ui.label("🐨 Ukoala").classes("koa-brand text-6xl")
+        ui.label(_greeting(streak)).classes("text-gray-500 text-lg -mt-2 text-center")
 
         # HUD -----------------------------------------------------------------
         with ui.card().classes("w-full max-w-3xl gap-3 p-5"):

@@ -59,6 +59,32 @@ def record_activity(source: str, xp: int | None = None) -> None:
     db.set_streak(next_streak(streak["last_date"], today, streak["current"]), today)
 
 
+def award(source: str, xp: int | None = None) -> dict:
+    """Record an activity and report what just happened, for celebratory UI.
+
+    Returns the XP gained, whether the learner levelled up, their new level, and
+    any badges that became newly earned. Call *after* the underlying progress
+    (score, completion, etc.) has been written so badge checks see it.
+    """
+    amount = XP.get(source, 0) if xp is None else xp
+    before_level = level_info(db.get_total_xp())["level"]
+
+    record_activity(source, xp)
+
+    after_level = level_info(db.get_total_xp())["level"]
+    # Badges newly earned = currently-earned minus any already celebrated. This is
+    # robust to when the underlying progress was written, and never double-fires.
+    new_ids = earned_badge_ids(build_snapshot()) - db.get_awarded_badges()
+    if new_ids:
+        db.add_awarded_badges(new_ids)
+    return {
+        "xp": amount,
+        "leveled_up": after_level > before_level,
+        "level": after_level,
+        "new_badges": [b for b in BADGES if b["id"] in new_ids],
+    }
+
+
 # --------------------------------------------------------------------------- #
 # Badges
 # --------------------------------------------------------------------------- #

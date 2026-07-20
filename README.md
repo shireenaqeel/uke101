@@ -1,4 +1,4 @@
-# Koa — Ukulele Learning App
+# Ukoala — Ukulele Learning App
 
 A free, focused, step-by-step web app that teaches ukulele from zero: chords → switching cleanly between them → strumming in rhythm → playing real songs → writing your own. A game layer (scores, streaks, XP) makes practice feel like progress rather than homework.
 

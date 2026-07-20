@@ -85,7 +85,7 @@ def main() -> None:
     from koa.ml.recognition import get_recognizer
 
     get_recognizer()
-    ui.run(title="Koa — Ukulele Learning", reload=False)
+    ui.run(title="Ukoala — Ukulele Learning", reload=False)
 
 
 if __name__ in {"__main__", "__mp_main__"}:

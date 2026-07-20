@@ -99,6 +99,9 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS awarded_badges (badge_id TEXT PRIMARY KEY)"
+        )
 
 
 def mark_learned(chord_id: str) -> None:
@@ -276,3 +279,17 @@ def get_streak() -> dict:
         if row is None:
             return {"current": 0, "last_date": None}
         return {"current": row["current"], "last_date": row["last_date"]}
+
+
+def get_awarded_badges() -> set[str]:
+    with _connect() as conn:
+        rows = conn.execute("SELECT badge_id FROM awarded_badges").fetchall()
+        return {row["badge_id"] for row in rows}
+
+
+def add_awarded_badges(badge_ids) -> None:
+    with _connect() as conn:
+        conn.executemany(
+            "INSERT OR IGNORE INTO awarded_badges (badge_id) VALUES (?)",
+            [(bid,) for bid in badge_ids],
+        )

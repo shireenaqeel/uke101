@@ -2,7 +2,8 @@ import time
 
 from nicegui import ui
 
-from koa import db, gamification, songbook
+from koa import db, songbook
+from koa.pages import fx
 from koa.data.chords import CHORDS
 from koa.data.patterns import STRUMMING_PATTERNS
 from koa.metronome import interval_seconds
@@ -172,7 +173,7 @@ def build_composer() -> None:
             ui.notify("Couldn't find any chords — check your lyrics or progression.", type="warning")
             return
         db.save_composed_song(song)
-        gamification.record_activity("composed_song")
+        fx.award("composed_song")
         ui.notify(f"Saved “{song['title']}”!", type="positive")
         ui.navigate.to(f"/song/{song['id']}")
 

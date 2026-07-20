@@ -28,15 +28,15 @@ def page_header(active_path: str) -> None:
         "koa-nav w-full items-center gap-2 px-4 py-2 flex-wrap justify-between"
     ):
         with ui.row().classes("items-center gap-3 flex-wrap"):
-            ui.label("🎸 Koa").classes("koa-brand text-xl")
+            ui.label("🐨 Ukoala").classes("koa-brand text-xl")
             with ui.row().classes("items-center gap-1 flex-wrap"):
                 for label, path in _NAV:
                     cls = "koa-navlink" + (" koa-navlink-active" if path == active_path else "")
                     ui.link(label, path).classes(cls)
         with ui.row().classes("items-center gap-2"):
             ui.label(f"⭐ Lv {level['level']}").classes("koa-hud").style(
-                "background:linear-gradient(90deg,#7C5CFF,#9C7BFF)"
+                "background:#4E6E8E"
             )
             ui.label(f"🔥 {streak}").classes("koa-hud").style(
-                "background:linear-gradient(90deg,#FF8A00,#FF5CA8)"
+                "background:#C79A5B"
             )

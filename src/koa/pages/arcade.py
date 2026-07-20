@@ -2,8 +2,9 @@ import time
 
 from nicegui import ui
 
-from koa import db, gamification
+from koa import db
 from koa.arcade import ArcadeEngine, note_times
+from koa.pages import fx
 from koa.data.chords import CHORDS
 from koa.data.patterns import STRUMMING_PATTERNS, beat_labels, get_pattern
 from koa.metronome import interval_seconds
@@ -189,7 +190,7 @@ def build_arcade() -> None:
         highlight(-1)
         eng = state["engine"]
         db.record_arcade_score(state["pattern"]["id"], eng.score, eng.max_combo)
-        gamification.record_activity("arcade_game")
+        fx.award("arcade_game")
         start_btn.set_text("Play again")
         start_btn.props("color=primary")
         judgment.text = ""
