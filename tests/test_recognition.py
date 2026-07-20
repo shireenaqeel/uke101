@@ -39,11 +39,18 @@ def test_recognizer_classifies_clean_chords():
         pred, conf = rec.predict_samples(samples, SAMPLE_RATE)
         correct += pred == chord["id"]
         assert 0.0 <= conf <= 1.0
-    # Some near-identical chords (Am/F, G/G7) may be confused; require a solid majority.
-    assert correct >= 8, f"only {correct}/{len(CHORDS)} recognised"
+    assert correct >= 11, f"only {correct}/{len(CHORDS)} recognised"
 
 
-def test_recognizer_confident_on_c_major():
+def test_recognizer_distinguishes_am_from_f():
+    # Am {A,C,E} and F {A,C,F} differ by one note — the template blend must separate them.
     rec = recognition.get_recognizer()
-    pred, conf = rec.predict_samples(chord_samples(get_chord("C")["frets"]), SAMPLE_RATE)
-    assert pred == "C"
+    for name in ("Am", "F", "G", "G7", "C"):
+        pred, _ = rec.predict_samples(chord_samples(get_chord(name)["frets"]), SAMPLE_RATE)
+        assert pred == name, f"{name} misread as {pred}"
+
+
+def test_chord_template_marks_pitch_classes():
+    template = recognition.chord_template(get_chord("Am"))
+    assert template[9] > 0 and template[0] > 0 and template[4] > 0  # A, C, E
+    assert template[5] == 0  # no F

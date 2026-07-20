@@ -36,6 +36,20 @@ def chord_pitch_classes(chord: dict) -> set[int]:
     return pcs
 
 
+def chord_template(chord: dict) -> np.ndarray:
+    """Unit-length 12-bin vector marking a chord's exact pitch classes.
+
+    Used as a music-theory prior so chords that differ by a single note
+    (e.g. Am {A,C,E} vs F {A,C,F}) can still be told apart even when the
+    trained classifier leans on the pitch classes they share.
+    """
+    v = np.zeros(12)
+    for pc in chord_pitch_classes(chord):
+        v[pc] = 1.0
+    norm = np.linalg.norm(v)
+    return v / norm if norm > 0 else v
+
+
 def extract_chroma(samples: np.ndarray, sample_rate: int, n_fft: int = 4096, hop: int = 2048) -> np.ndarray:
     """Fold an audio clip's spectral energy into 12 pitch-class bins (L2-normalised)."""
     samples = np.asarray(samples, dtype=np.float64)
@@ -62,7 +76,7 @@ def extract_chroma(samples: np.ndarray, sample_rate: int, n_fft: int = 4096, hop
     return chroma / norm if norm > 0 else chroma
 
 
-def _synthetic_dataset(variants: int = 8, seed: int = 0) -> tuple[np.ndarray, list[str]]:
+def _synthetic_dataset(variants: int = 18, seed: int = 0) -> tuple[np.ndarray, list[str]]:
     """Chroma features for each chord, rendered from the synth with added noise."""
     rng = np.random.default_rng(seed)
     features = []
@@ -71,21 +85,27 @@ def _synthetic_dataset(variants: int = 8, seed: int = 0) -> tuple[np.ndarray, li
         clean = chord_samples(chord["frets"], duration=1.4)
         for _ in range(variants):
             gain = rng.uniform(0.6, 1.0)
-            noise = rng.normal(0, 0.02, clean.shape).astype(np.float32)
+            noise = rng.normal(0, 0.012, clean.shape).astype(np.float32)
             features.append(extract_chroma(clean * gain + noise, SAMPLE_RATE))
             labels.append(chord["id"])
     return np.array(features), labels
 
 
+# Weight of the learned classifier vs the exact-template prior when blending.
+_CLASSIFIER_WEIGHT = 0.5
+
+
 class Recognizer:
     def __init__(self):
         self.labels: list[str] = []
+        self._templates: np.ndarray | None = None
         self._centroids: np.ndarray | None = None
         self._model = None
 
     def train(self) -> "Recognizer":
         X, y = _synthetic_dataset()
         self.labels = [c["id"] for c in CHORDS]
+        self._templates = np.array([chord_template(c) for c in CHORDS])
         if _HAVE_SKLEARN:
             self._model = make_pipeline(
                 StandardScaler(), LogisticRegression(max_iter=1000, C=5.0)
@@ -97,27 +117,38 @@ class Recognizer:
             )
         return self
 
-    def predict(self, chroma: np.ndarray) -> tuple[str, float]:
-        """Return (chord_id, confidence 0..1) for a chroma vector."""
+    def _classifier_probs(self, chroma: np.ndarray) -> np.ndarray:
+        """Classifier probabilities aligned to ``self.labels`` order."""
         if self._model is not None:
-            probs = self._model.predict_proba([chroma])[0]
-            idx = int(np.argmax(probs))
-            return self._model.classes_[idx], float(probs[idx])
-        if self._centroids is None:
-            self.train()
+            raw = self._model.predict_proba([chroma])[0]
+            order = {label: i for i, label in enumerate(self._model.classes_)}
+            return np.array([raw[order[label]] for label in self.labels])
         sims = self._centroids @ chroma / (
             np.linalg.norm(self._centroids, axis=1) * (np.linalg.norm(chroma) + 1e-9) + 1e-9
         )
-        probs = _softmax(sims * 8.0)
-        idx = int(np.argmax(probs))
-        return self.labels[idx], float(probs[idx])
+        return _softmax(sims * 8.0)
+
+    def predict(self, chroma: np.ndarray) -> tuple[str, float]:
+        """Return (chord_id, confidence 0..1) for a chroma vector.
+
+        Blends the learned classifier with cosine similarity to each chord's
+        exact pitch-class template, so single-note-apart chords stay separable.
+        """
+        if self._templates is None:
+            self.train()
+        classifier = self._classifier_probs(chroma)
+        template = _softmax(self._templates @ chroma * 6.0)
+        combined = _CLASSIFIER_WEIGHT * classifier + (1 - _CLASSIFIER_WEIGHT) * template
+        idx = int(np.argmax(combined))
+        return self.labels[idx], float(combined[idx])
 
     def predict_samples(self, samples: np.ndarray, sample_rate: int) -> tuple[str, float]:
         return self.predict(extract_chroma(samples, sample_rate))
 
     @property
     def backend(self) -> str:
-        return "sklearn" if self._model is not None else "nearest-centroid"
+        base = "sklearn" if self._model is not None else "nearest-centroid"
+        return f"{base}+template"
 
 
 def _softmax(x: np.ndarray) -> np.ndarray:
