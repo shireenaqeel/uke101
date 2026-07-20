@@ -13,8 +13,8 @@ Each phase is a shippable checkpoint. We confirm a phase works before starting t
 | 4 | Strum Arcade (scored rhythm game) | ✅ done |
 | 5 | Song Mode (scrolling lyrics + synced chords) | ✅ done |
 | 6 | Song Composer | ✅ done |
-| 7 | Notation Reading Track | ⬜ next |
-| 8 | Gamification (XP, levels, streaks, badges) | ⬜ |
+| 7 | Notation Reading Track | ✅ done |
+| 8 | Gamification (XP, levels, streaks, badges) | ⬜ next |
 | 9 | Adaptive Difficulty (ML, no audio) | ⬜ |
 | 10 | Mic-Based Chord Recognition (ML, audio pipeline) | ⬜ |
 

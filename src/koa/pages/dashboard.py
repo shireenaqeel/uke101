@@ -3,6 +3,7 @@ from nicegui import ui
 from koa import db
 from koa.data.chords import CHORDS
 from koa.data.drills import drill_labels
+from koa.data.notation import NOTATION_DRILLS, NOTATION_TRACKS
 from koa.data.patterns import PATTERNS_BY_ID, STRUMMING_PATTERNS
 from koa.data.songs import SONGS, SONGS_BY_ID
 from koa.pages.common import page_header
@@ -15,6 +16,7 @@ def build_dashboard() -> None:
     switch_bests = db.get_switch_bests()
     arcade_bests = db.get_arcade_bests()
     completed_songs = db.get_completed_songs()
+    notation = db.get_notation_progress()
     labels = drill_labels()
 
     with ui.column().classes("w-full max-w-4xl mx-auto items-stretch gap-6 p-6"):
@@ -98,6 +100,17 @@ def build_dashboard() -> None:
                 ui.label("No songs completed yet — play one end to end in Song Mode.").classes(
                     "text-gray-500"
                 )
+
+        # --- notation track --------------------------------------------------
+        with ui.card().classes("w-full gap-3"):
+            ui.label("Notation reading (optional track)").classes("text-xl font-semibold")
+            with ui.row().classes("gap-6 flex-wrap"):
+                for track in NOTATION_TRACKS:
+                    top = max((d["level"] for d in NOTATION_DRILLS[track["id"]]), default=0)
+                    level = notation.get(track["id"], 0)
+                    with ui.column().classes("gap-0"):
+                        ui.label(track["name"]).classes("font-semibold")
+                        ui.label(f"Level {level} / {top}").classes("text-sm text-gray-500")
 
         # --- strumming patterns ---------------------------------------------
         with ui.card().classes("w-full gap-2"):

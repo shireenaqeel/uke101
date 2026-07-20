@@ -5,6 +5,7 @@ from koa.pages.arcade import build_arcade
 from koa.pages.composer import build_composer
 from koa.pages.dashboard import build_dashboard
 from koa.pages.library import build_library
+from koa.pages.notation import build_notation_home, build_notation_practice
 from koa.pages.songs import build_song_list, build_song_player
 from koa.pages.strumming import build_strumming
 from koa.pages.switching import build_switching
@@ -43,6 +44,16 @@ def song_player(song_id: str) -> None:
 @ui.page("/composer")
 def composer() -> None:
     build_composer()
+
+
+@ui.page("/notation")
+def notation() -> None:
+    build_notation_home()
+
+
+@ui.page("/notation/{track}")
+def notation_practice(track: str) -> None:
+    build_notation_practice(track)
 
 
 @ui.page("/dashboard")

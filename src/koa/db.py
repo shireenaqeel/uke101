@@ -72,6 +72,14 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS notation_progress (
+                track TEXT PRIMARY KEY,
+                level INTEGER NOT NULL
+            )
+            """
+        )
 
 
 def mark_learned(chord_id: str) -> None:
@@ -202,3 +210,21 @@ def get_composed_song(song_id: str) -> dict | None:
 def delete_composed_song(song_id: str) -> None:
     with _connect() as conn:
         conn.execute("DELETE FROM composed_songs WHERE id = ?", (song_id,))
+
+
+def set_notation_level(track: str, level: int) -> None:
+    """Record a track's reached level, never lowering an existing higher one."""
+    with _connect() as conn:
+        conn.execute(
+            """
+            INSERT INTO notation_progress (track, level) VALUES (?, ?)
+            ON CONFLICT(track) DO UPDATE SET level = MAX(level, excluded.level)
+            """,
+            (track, level),
+        )
+
+
+def get_notation_progress() -> dict[str, int]:
+    with _connect() as conn:
+        rows = conn.execute("SELECT track, level FROM notation_progress").fetchall()
+        return {row["track"]: row["level"] for row in rows}

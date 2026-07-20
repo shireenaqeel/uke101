@@ -74,3 +74,13 @@ def test_song_completion(db):
     db.mark_song_completed("twinkle")  # idempotent
     db.mark_song_completed("saints")
     assert db.get_completed_songs() == {"twinkle", "saints"}
+
+
+def test_notation_level_never_decreases(db):
+    assert db.get_notation_progress() == {}
+    db.set_notation_level("rhythm", 2)
+    db.set_notation_level("rhythm", 1)  # lower -> ignored
+    db.set_notation_level("staff", 3)
+    assert db.get_notation_progress() == {"rhythm": 2, "staff": 3}
+    db.set_notation_level("rhythm", 3)  # higher -> updates
+    assert db.get_notation_progress()["rhythm"] == 3
