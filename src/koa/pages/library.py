@@ -1,7 +1,7 @@
 from nicegui import app, ui
 from starlette.responses import Response
 
-from koa import db
+from koa import db, gamification
 from koa.audio import synth
 from koa.data.chords import CHORDS, fingering_text, get_chord
 from koa.fretboard import render_fretboard
@@ -59,7 +59,13 @@ def build_library() -> None:
             counter.text = f"{len(db.get_learned())}/{len(CHORDS)} chords learned"
 
         def on_change(chord_id: str, value: bool) -> None:
-            db.mark_learned(chord_id) if value else db.unmark_learned(chord_id)
+            if value:
+                newly = chord_id not in db.get_learned()
+                db.mark_learned(chord_id)
+                if newly:
+                    gamification.record_activity("chord_learned")
+            else:
+                db.unmark_learned(chord_id)
             refresh_counter()
 
         refresh_counter()

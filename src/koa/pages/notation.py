@@ -1,6 +1,6 @@
 from nicegui import ui
 
-from koa import db
+from koa import db, gamification
 from koa.data.notation import NOTATION_DRILLS, NOTATION_TRACKS, get_track_drills
 from koa.notation import render_notation
 from koa.pages.common import page_header
@@ -114,6 +114,8 @@ def build_notation_practice(track: str) -> None:
     def finish() -> None:
         if state["best_level"] > 0:
             db.set_notation_level(track, state["best_level"])
+        if state["correct"] > 0:
+            gamification.record_activity("notation_session")
         prompt.visible = False
         question.visible = False
         choices_box.visible = False

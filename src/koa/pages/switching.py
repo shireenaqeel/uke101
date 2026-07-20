@@ -3,7 +3,7 @@ import time
 from nicegui import app, ui
 from starlette.responses import Response
 
-from koa import db
+from koa import db, gamification
 from koa.audio import synth
 from koa.data.chords import CHORDS, get_chord
 from koa.data.drills import DRILLS, drill_key
@@ -176,6 +176,7 @@ def build_switching() -> None:
         elapsed = min(time.time() - state["start"], state["duration"])
         count = state["count"]
         db.record_switch_score(drill_key(state["chords"]), count, elapsed)
+        gamification.record_activity("switch_drill")
         spm = switches_per_minute(count, elapsed)
         result.text = f"{count} clean switches in {elapsed:0.0f}s  (≈ {spm:0.0f} / min)"
         start_btn.set_text("Start")

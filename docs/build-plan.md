@@ -14,8 +14,8 @@ Each phase is a shippable checkpoint. We confirm a phase works before starting t
 | 5 | Song Mode (scrolling lyrics + synced chords) | ✅ done |
 | 6 | Song Composer | ✅ done |
 | 7 | Notation Reading Track | ✅ done |
-| 8 | Gamification (XP, levels, streaks, badges) | ⬜ next |
-| 9 | Adaptive Difficulty (ML, no audio) | ⬜ |
+| 8 | Gamification (XP, levels, streaks, badges) | ✅ done |
+| 9 | Adaptive Difficulty (ML, no audio) | ⬜ next |
 | 10 | Mic-Based Chord Recognition (ML, audio pipeline) | ⬜ |
 
 **MVP = Phases 1–3** (Definition of Done in the project spec, Section 8) — ✅ **complete**. Phases 4–10 make it "the full thing."

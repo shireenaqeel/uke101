@@ -80,6 +80,25 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS xp_events (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                source     TEXT NOT NULL,
+                amount     INTEGER NOT NULL,
+                created_at TEXT NOT NULL DEFAULT (datetime('now'))
+            )
+            """
+        )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS streak (
+                id        INTEGER PRIMARY KEY CHECK (id = 1),
+                current   INTEGER NOT NULL,
+                last_date TEXT
+            )
+            """
+        )
 
 
 def mark_learned(chord_id: str) -> None:
@@ -228,3 +247,32 @@ def get_notation_progress() -> dict[str, int]:
     with _connect() as conn:
         rows = conn.execute("SELECT track, level FROM notation_progress").fetchall()
         return {row["track"]: row["level"] for row in rows}
+
+
+def add_xp(source: str, amount: int) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT INTO xp_events (source, amount) VALUES (?, ?)", (source, amount)
+        )
+
+
+def get_total_xp() -> int:
+    with _connect() as conn:
+        row = conn.execute("SELECT COALESCE(SUM(amount), 0) AS total FROM xp_events").fetchone()
+        return row["total"]
+
+
+def set_streak(current: int, last_date: str) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT OR REPLACE INTO streak (id, current, last_date) VALUES (1, ?, ?)",
+            (current, last_date),
+        )
+
+
+def get_streak() -> dict:
+    with _connect() as conn:
+        row = conn.execute("SELECT current, last_date FROM streak WHERE id = 1").fetchone()
+        if row is None:
+            return {"current": 0, "last_date": None}
+        return {"current": row["current"], "last_date": row["last_date"]}

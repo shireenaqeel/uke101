@@ -84,3 +84,18 @@ def test_notation_level_never_decreases(db):
     assert db.get_notation_progress() == {"rhythm": 2, "staff": 3}
     db.set_notation_level("rhythm", 3)  # higher -> updates
     assert db.get_notation_progress()["rhythm"] == 3
+
+
+def test_xp_accumulates(db):
+    assert db.get_total_xp() == 0
+    db.add_xp("chord_learned", 10)
+    db.add_xp("song", 30)
+    assert db.get_total_xp() == 40
+
+
+def test_streak_storage(db):
+    assert db.get_streak() == {"current": 0, "last_date": None}
+    db.set_streak(3, "2026-07-20")
+    assert db.get_streak() == {"current": 3, "last_date": "2026-07-20"}
+    db.set_streak(4, "2026-07-21")  # single row, replaced
+    assert db.get_streak() == {"current": 4, "last_date": "2026-07-21"}

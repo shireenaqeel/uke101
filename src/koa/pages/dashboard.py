@@ -1,6 +1,6 @@
 from nicegui import ui
 
-from koa import db
+from koa import db, gamification
 from koa.data.chords import CHORDS
 from koa.data.drills import drill_labels
 from koa.data.notation import NOTATION_DRILLS, NOTATION_TRACKS
@@ -19,8 +19,39 @@ def build_dashboard() -> None:
     notation = db.get_notation_progress()
     labels = drill_labels()
 
+    snapshot = gamification.build_snapshot()
+    level = gamification.level_info(db.get_total_xp())
+    earned = gamification.earned_badge_ids(snapshot)
+
     with ui.column().classes("w-full max-w-4xl mx-auto items-stretch gap-6 p-6"):
         ui.label("Progress Dashboard").classes("text-3xl font-bold self-center")
+
+        # --- level, XP, streak, badges --------------------------------------
+        with ui.card().classes("w-full gap-3"):
+            with ui.row().classes("w-full items-center justify-between flex-wrap gap-4"):
+                with ui.column().classes("gap-0"):
+                    ui.label(f"Level {level['level']}").classes("text-2xl font-bold")
+                    ui.label(f"{level['total_xp']} XP total").classes("text-sm text-gray-500")
+                ui.label(f"🔥 {snapshot['streak']}-day streak").classes("text-xl font-semibold")
+            ui.linear_progress(
+                value=level["into_level"] / level["next_level_xp"], show_value=False
+            ).props("rounded")
+            ui.label(
+                f"{level['into_level']} / {level['next_level_xp']} XP to level {level['level'] + 1}"
+            ).classes("text-xs text-gray-400")
+
+            ui.separator()
+            ui.label(f"Badges — {len(earned)} of {len(gamification.BADGES)}").classes(
+                "text-sm font-semibold"
+            )
+            with ui.row().classes("gap-3 flex-wrap"):
+                for badge in gamification.BADGES:
+                    has = badge["id"] in earned
+                    with ui.column().classes(
+                        "items-center gap-0 w-24 " + ("" if has else "opacity-40 grayscale")
+                    ).tooltip(badge["desc"]):
+                        ui.label(badge["icon"]).classes("text-3xl")
+                        ui.label(badge["name"]).classes("text-xs text-center")
 
         # --- chords learned --------------------------------------------------
         with ui.card().classes("w-full gap-3"):
