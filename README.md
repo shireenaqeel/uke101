@@ -57,6 +57,7 @@ pytest
 - **Strumming Pattern Trainer** — six named patterns shown as a down/up/rest beat grid, play-along at adjustable tempo with the current beat highlighted and the chosen chord strummed on each stroke.
 - **Strum Arcade** — a scored rhythm game over any pattern: tap in time with each stroke (Space or button), judged Perfect/Good/Miss with a combo multiplier and per-pattern high scores.
 - **Song Mode** — play a real song end to end: lyrics and chord changes scroll in time with the tempo, the current line is highlighted, and the current chord's diagram shows on the side. Ships public-domain songs with full lyrics plus copyrighted starters as chord-chart-only (progression + link out, no verbatim lyrics). Completed songs are tracked.
+- **Song Composer** — build a chord progression (add/reorder/remove), add optional lyrics in a ChordPro-style format (`[C]Twinkle [F]little`), preview it, and save. Composed songs are stored and play back in the same Song Mode player as curated ones, listed as "My songs", and can be deleted or exported as a text chord chart.
 - **Progress Dashboard** — chords learned, best switch speeds per drill, arcade high scores, songs completed, and available patterns, all populated from real stored data.
 
-52 tests passing. Next: Phase 6 (Song Composer). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.
+62 tests passing. Next: Phase 7 (Notation Reading Track). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.

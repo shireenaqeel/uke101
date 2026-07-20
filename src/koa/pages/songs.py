@@ -3,11 +3,10 @@ from html import escape
 
 from nicegui import ui
 
-from koa import db
+from koa import db, songbook
 from koa.data.chords import get_chord
-from koa.data.songs import SONGS, cumulative_times, get_song, primary_line_chords
+from koa.data.songs import cumulative_times, primary_line_chords
 from koa.fretboard import render_fretboard
-from koa.metronome import interval_seconds
 from koa.pages.common import page_header
 
 _DIFFICULTY_COLORS = {"easy": "green", "medium": "amber", "hard": "red"}
@@ -36,20 +35,26 @@ def build_song_list() -> None:
     completed = db.get_completed_songs()
 
     with ui.column().classes("w-full max-w-5xl mx-auto items-center gap-4 p-6"):
-        ui.label("Songs").classes("text-3xl font-bold")
+        with ui.row().classes("w-full max-w-5xl items-center justify-between"):
+            ui.label("Songs").classes("text-3xl font-bold")
+            ui.button(
+                "Compose a song", icon="add", on_click=lambda: ui.navigate.to("/composer")
+            ).props("outline")
         ui.label("Play a real song end to end — lyrics and chords scroll in time.").classes(
             "text-gray-500"
         )
         with ui.row().classes("w-full justify-center gap-4 flex-wrap"):
-            for song in SONGS:
+            for song in songbook.all_songs():
                 with ui.card().classes("w-72 gap-2"):
                     with ui.row().classes("w-full items-center justify-between"):
                         ui.label(song["title"]).classes("text-lg font-bold")
                         ui.badge(song["difficulty"], color=_DIFFICULTY_COLORS[song["difficulty"]])
                     ui.label(song["artist"]).classes("text-sm text-gray-500 -mt-2")
-                    with ui.row().classes("gap-1 flex-wrap"):
+                    with ui.row().classes("gap-1 flex-wrap items-center"):
                         for chord in song["chords_used"]:
                             ui.badge(chord, color="secondary")
+                        if song.get("is_user_composed"):
+                            ui.badge("My song", color="purple")
                     if not song["lyrics_included"]:
                         ui.label("Chord chart only").classes("text-xs text-gray-400")
                     with ui.row().classes("w-full items-center justify-between"):
@@ -57,9 +62,21 @@ def build_song_list() -> None:
                             ui.label("✓ completed").classes("text-xs text-green-600")
                         else:
                             ui.space()
-                        ui.button(
-                            "Open", on_click=lambda s=song: ui.navigate.to(f"/song/{s['id']}")
-                        ).props("size=sm")
+                        with ui.row().classes("gap-1"):
+                            if song.get("is_user_composed"):
+                                ui.button(
+                                    icon="delete",
+                                    on_click=lambda s=song: _delete_song(s["id"], s["title"]),
+                                ).props("round flat size=sm color=grey").tooltip("Delete")
+                            ui.button(
+                                "Open", on_click=lambda s=song: ui.navigate.to(f"/song/{s['id']}")
+                            ).props("size=sm")
+
+
+def _delete_song(song_id: str, title: str) -> None:
+    db.delete_composed_song(song_id)
+    ui.notify(f"Deleted “{title}”.", type="warning")
+    ui.navigate.to("/songs")
 
 
 # --------------------------------------------------------------------------- #
@@ -67,7 +84,7 @@ def build_song_list() -> None:
 # --------------------------------------------------------------------------- #
 def build_song_player(song_id: str) -> None:
     page_header("/songs")
-    song = get_song(song_id)
+    song = songbook.get_song(song_id)
     if song is None:
         with ui.column().classes("w-full max-w-3xl mx-auto items-center gap-4 p-6"):
             ui.label("Song not found").classes("text-2xl")
@@ -104,11 +121,16 @@ def build_song_player(song_id: str) -> None:
             ui.button("← Songs", on_click=lambda: ui.navigate.to("/songs")).props("flat")
 
         if not song["lyrics_included"]:
-            ui.label(
-                "Lyrics aren't included for this song (copyrighted). Play along with the chord "
-                "progression below and follow the full lyrics at the link."
-            ).classes("text-sm text-gray-500")
-            ui.link("Open lyrics ↗", song["source_url"], new_tab=True).classes("text-sm")
+            if song.get("source_url"):
+                ui.label(
+                    "Lyrics aren't included for this song (copyrighted). Play along with the chord "
+                    "progression below and follow the full lyrics at the link."
+                ).classes("text-sm text-gray-500")
+                ui.link("Open lyrics ↗", song["source_url"], new_tab=True).classes("text-sm")
+            else:
+                ui.label("Your chord chart — play along with the progression below.").classes(
+                    "text-sm text-gray-500"
+                )
 
         with ui.row().classes("w-full gap-6 items-start"):
             # scrolling steps
@@ -144,6 +166,9 @@ def build_song_player(song_id: str) -> None:
                 complete_btn = ui.button(
                     "Mark completed", on_click=lambda: mark_complete()
                 ).props("outline size-sm")
+                ui.button("Export chart", icon="download", on_click=lambda: export_chart()).props(
+                    "flat size-sm"
+                )
 
     # --- behaviour -----------------------------------------------------------
     def set_active(idx: int) -> None:
@@ -154,9 +179,13 @@ def build_song_player(song_id: str) -> None:
             else:
                 el.classes(remove="bg-amber-100 ring-1 ring-amber-400")
         chord = steps[idx]["chord"] if 0 <= idx < len(steps) else None
-        if chord:
+        chord_obj = get_chord(chord) if chord else None
+        if chord_obj:
             chord_name.text = chord
-            diagram.set_content(render_fretboard(get_chord(chord)))
+            diagram.set_content(render_fretboard(chord_obj))
+        elif chord:
+            chord_name.text = chord  # unknown chord (custom label): show name, no diagram
+            diagram.set_content("")
         if 0 <= idx < len(steps):
             ui.run_javascript(
                 f"var e=document.getElementById('step-{idx}');"
@@ -208,6 +237,10 @@ def build_song_player(song_id: str) -> None:
     def mark_complete() -> None:
         db.mark_song_completed(song["id"])
         ui.notify("Marked as completed.", type="positive")
+
+    def export_chart() -> None:
+        text = songbook.chord_chart_text(song)
+        ui.download(text.encode("utf-8"), f"{song['id']}.txt")
 
     if steps:
         set_active(0)

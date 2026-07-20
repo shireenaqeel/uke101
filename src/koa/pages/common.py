@@ -6,6 +6,7 @@ _NAV = [
     ("Strumming Trainer", "/strumming"),
     ("Strum Arcade", "/arcade"),
     ("Songs", "/songs"),
+    ("Compose", "/composer"),
     ("Dashboard", "/dashboard"),
 ]
 

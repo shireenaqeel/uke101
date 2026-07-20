@@ -5,6 +5,7 @@ seed of the wider UserProgress model (switch speeds, scores, streak) added in
 later phases. One SQLite file, no server to run.
 """
 
+import json
 import os
 import sqlite3
 from pathlib import Path
@@ -59,6 +60,15 @@ def init_db() -> None:
             CREATE TABLE IF NOT EXISTS songs_completed (
                 song_id      TEXT PRIMARY KEY,
                 completed_at TEXT NOT NULL DEFAULT (datetime('now'))
+            )
+            """
+        )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS composed_songs (
+                id         TEXT PRIMARY KEY,
+                data       TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT (datetime('now'))
             )
             """
         )
@@ -163,3 +173,32 @@ def get_completed_songs() -> set[str]:
     with _connect() as conn:
         rows = conn.execute("SELECT song_id FROM songs_completed").fetchall()
         return {row["song_id"] for row in rows}
+
+
+def save_composed_song(song: dict) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT OR REPLACE INTO composed_songs (id, data) VALUES (?, ?)",
+            (song["id"], json.dumps(song)),
+        )
+
+
+def get_composed_songs() -> list[dict]:
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT data FROM composed_songs ORDER BY created_at"
+        ).fetchall()
+        return [json.loads(row["data"]) for row in rows]
+
+
+def get_composed_song(song_id: str) -> dict | None:
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT data FROM composed_songs WHERE id = ?", (song_id,)
+        ).fetchone()
+        return json.loads(row["data"]) if row else None
+
+
+def delete_composed_song(song_id: str) -> None:
+    with _connect() as conn:
+        conn.execute("DELETE FROM composed_songs WHERE id = ?", (song_id,))

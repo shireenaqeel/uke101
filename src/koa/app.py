@@ -2,6 +2,7 @@ from nicegui import ui
 
 from koa import db
 from koa.pages.arcade import build_arcade
+from koa.pages.composer import build_composer
 from koa.pages.dashboard import build_dashboard
 from koa.pages.library import build_library
 from koa.pages.songs import build_song_list, build_song_player
@@ -37,6 +38,11 @@ def songs() -> None:
 @ui.page("/song/{song_id}")
 def song_player(song_id: str) -> None:
     build_song_player(song_id)
+
+
+@ui.page("/composer")
+def composer() -> None:
+    build_composer()
 
 
 @ui.page("/dashboard")
