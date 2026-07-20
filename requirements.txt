@@ -1,7 +1,6 @@
 nicegui==3.14.0
 numpy==2.5.1
 
-# ML / audio analysis — added in Phase 9/10 (not required for MVP)
-# scipy
-# librosa
-# scikit-learn
+# ML / audio analysis (Phase 10 mic-based chord recognition)
+scipy==1.18.0
+scikit-learn==1.9.0

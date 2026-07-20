@@ -6,6 +6,7 @@ from koa.pages.coach import build_coach
 from koa.pages.composer import build_composer
 from koa.pages.dashboard import build_dashboard
 from koa.pages.library import build_library
+from koa.pages.listen import build_listen
 from koa.pages.notation import build_notation_home, build_notation_practice
 from koa.pages.songs import build_song_list, build_song_player
 from koa.pages.strumming import build_strumming
@@ -62,6 +63,11 @@ def notation_practice(track: str) -> None:
     build_notation_practice(track)
 
 
+@ui.page("/listen")
+def listen() -> None:
+    build_listen()
+
+
 @ui.page("/dashboard")
 def dashboard() -> None:
     build_dashboard()
@@ -69,6 +75,10 @@ def dashboard() -> None:
 
 def main() -> None:
     db.init_db()
+    # Warm the chord recognizer so the first Ear Trainer check isn't slow.
+    from koa.ml.recognition import get_recognizer
+
+    get_recognizer()
     ui.run(title="Koa — Ukulele Learning", reload=False)
 
 

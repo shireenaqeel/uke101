@@ -17,6 +17,7 @@ XP = {
     "song": 30,
     "composed_song": 25,
     "notation_session": 15,
+    "ear_practice": 10,
 }
 
 

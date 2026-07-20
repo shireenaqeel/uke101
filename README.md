@@ -62,5 +62,6 @@ pytest
 - **Gamification** — every practice action awards XP; XP drives levels, a daily practice streak, and unlockable badges (chords learned, switch/arcade milestones, songs, composing, notation, streaks). Surfaced at the top of the dashboard.
 - **Progress Dashboard** — level/XP/streak and badges, chords learned, best switch speeds per drill, arcade high scores, songs completed, notation levels, and available patterns, all populated from real stored data.
 - **Coach (adaptive)** — a rule-based recommender (`koa.ml.adaptive`) over your progress: the next chord that unlocks the most songs, your weakest switch drills (deep-linked into the trainer), songs you can play now, and songs one chord away.
+- **Ear Trainer (mic ML)** — play a chord on a real ukulele and the app listens: the browser records a short clip, the server extracts a 12-bin chroma feature (pure numpy FFT), and a classifier trained on synthetic chroma from the app's own synth predicts the chord and compares it to your target. Uses scikit-learn when available, with a numpy nearest-centroid fallback.
 
-81 tests passing. Next: Phase 10 (Mic-Based Chord Recognition — final ML phase, audio pipeline). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.
+**All 10 phases complete.** 86 tests passing. Full plan and status in [`docs/build-plan.md`](docs/build-plan.md).
