@@ -2,6 +2,7 @@ from nicegui import ui
 
 _NAV = [
     ("Chord Library", "/"),
+    ("Coach", "/coach"),
     ("Switching Trainer", "/switching"),
     ("Strumming Trainer", "/strumming"),
     ("Strum Arcade", "/arcade"),

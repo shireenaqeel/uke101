@@ -2,6 +2,7 @@ from nicegui import ui
 
 from koa import db
 from koa.pages.arcade import build_arcade
+from koa.pages.coach import build_coach
 from koa.pages.composer import build_composer
 from koa.pages.dashboard import build_dashboard
 from koa.pages.library import build_library
@@ -17,8 +18,13 @@ def index() -> None:
 
 
 @ui.page("/switching")
-def switching() -> None:
-    build_switching()
+def switching(a: str | None = None, b: str | None = None) -> None:
+    build_switching(a, b)
+
+
+@ui.page("/coach")
+def coach() -> None:
+    build_coach()
 
 
 @ui.page("/strumming")

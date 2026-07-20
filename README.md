@@ -61,5 +61,6 @@ pytest
 - **Notation Reading Track** — an optional skill track with three progressive sub-tracks (rhythm durations → treble-staff notes → 4-line ukulele tab), each a short multiple-choice drill session with SVG-rendered prompts, instant feedback, and per-track level progress. Kept separate from the chord/song path.
 - **Gamification** — every practice action awards XP; XP drives levels, a daily practice streak, and unlockable badges (chords learned, switch/arcade milestones, songs, composing, notation, streaks). Surfaced at the top of the dashboard.
 - **Progress Dashboard** — level/XP/streak and badges, chords learned, best switch speeds per drill, arcade high scores, songs completed, notation levels, and available patterns, all populated from real stored data.
+- **Coach (adaptive)** — a rule-based recommender (`koa.ml.adaptive`) over your progress: the next chord that unlocks the most songs, your weakest switch drills (deep-linked into the trainer), songs you can play now, and songs one chord away.
 
-75 tests passing. Next: Phase 9 (Adaptive Difficulty — first ML phase, no audio). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.
+81 tests passing. Next: Phase 10 (Mic-Based Chord Recognition — final ML phase, audio pipeline). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.

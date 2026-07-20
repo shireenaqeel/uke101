@@ -22,11 +22,15 @@ def metronome_audio():
     return Response(content=_metronome_cache[False], media_type="audio/wav")
 
 
-def build_switching() -> None:
+def build_switching(preset_a: str | None = None, preset_b: str | None = None) -> None:
     page_header("/switching")
 
+    initial = list(DRILLS[0]["chords"])
+    if get_chord(preset_a) and get_chord(preset_b):
+        initial = [preset_a, preset_b]
+
     state = {
-        "chords": list(DRILLS[0]["chords"]),
+        "chords": initial,
         "index": 0,
         "count": 0,
         "running": False,
