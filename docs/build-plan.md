@@ -9,8 +9,8 @@ Each phase is a shippable checkpoint. We confirm a phase works before starting t
 | 0 | Repo scaffold: venv, structure, runnable NiceGUI landing page, tests | ✅ done |
 | 1 | Chord Library: chord data set, data-driven fretboard renderer, audio pluck synth, browse + "mark learned" | ✅ done |
 | 2 | Chord Switching Trainer: metronome engine, 2-chord drills, switch-speed tracking per pair | ✅ done |
-| 3 | Strumming Pattern Trainer + Progress Dashboard | ⬜ next |
-| 4 | Strum Arcade (scored rhythm game) | ⬜ |
+| 3 | Strumming Pattern Trainer + Progress Dashboard | ✅ done |
+| 4 | Strum Arcade (scored rhythm game) | ⬜ next |
 | 5 | Song Mode (scrolling lyrics + synced chords) | ⬜ |
 | 6 | Song Composer | ⬜ |
 | 7 | Notation Reading Track | ⬜ |
@@ -18,7 +18,7 @@ Each phase is a shippable checkpoint. We confirm a phase works before starting t
 | 9 | Adaptive Difficulty (ML, no audio) | ⬜ |
 | 10 | Mic-Based Chord Recognition (ML, audio pipeline) | ⬜ |
 
-**MVP = Phases 1–3** (Definition of Done in the project spec, Section 8). Phases 4–10 make it "the full thing."
+**MVP = Phases 1–3** (Definition of Done in the project spec, Section 8) — ✅ **complete**. Phases 4–10 make it "the full thing."
 
 ## Reuse contracts (decided up front to avoid duplication)
 

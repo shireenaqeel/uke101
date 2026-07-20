@@ -37,3 +37,20 @@ def test_chord_wav_has_riff_header():
     assert data[:4] == b"RIFF"
     assert data[8:12] == b"WAVE"
     assert len(data) > 44  # header + samples
+
+
+def test_up_and_down_strum_differ():
+    frets = {"G": 0, "C": 2, "E": 3, "A": 2}
+    down = synth.strum_samples(frets, "D")
+    up = synth.strum_samples(frets, "U")
+    assert down.shape == up.shape
+    assert not np.array_equal(down, up)  # opposite sweep direction
+
+
+def test_strum_wav_riff_header():
+    data = synth.strum_wav({"G": 0, "C": 0, "E": 0, "A": 3}, "D")
+    assert data[:4] == b"RIFF"
+
+
+def test_metronome_wav_riff_header():
+    assert synth.metronome_wav()[:4] == b"RIFF"

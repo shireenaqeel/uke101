@@ -50,9 +50,11 @@ pytest
 
 ## Status
 
-**Phases 1–2 complete.**
+**MVP complete (Phases 1–3).**
 
 - **Chord Library** — 12 chords rendered from data as fretboard diagrams (`render_fretboard`), each playable via server-synthesized audio (`koa.audio.synth`) and markable as "learned", persisted to SQLite across reloads.
 - **Chord Switching Trainer** — metronome (adjustable tempo + click), timed switch test over preset beginner pairs / 3- and 4-chord loops (or any custom pair), counts clean switches via tap or spacebar, and tracks the best switch count per drill across sessions.
+- **Strumming Pattern Trainer** — six named patterns shown as a down/up/rest beat grid, play-along at adjustable tempo with the current beat highlighted and the chosen chord strummed on each stroke.
+- **Progress Dashboard** — chords learned, best switch speeds per drill, and available patterns, all populated from real stored data.
 
-26 tests passing. Next: Phase 3 (Strumming Pattern Trainer + Progress Dashboard). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.
+35 tests passing. Next: Phase 4 (Strum Arcade). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.

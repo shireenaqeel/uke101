@@ -23,3 +23,8 @@ def drill_key(chords: list[str]) -> str:
     if len(seq) == 2:
         seq = sorted(seq)
     return "-".join(seq)
+
+
+def drill_labels() -> dict[str, str]:
+    """Map each preset drill's storage key to its human label, for the dashboard."""
+    return {drill_key(d["chords"]): d["label"] for d in DRILLS}

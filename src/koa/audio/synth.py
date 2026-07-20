@@ -53,13 +53,19 @@ def chord_samples(
     frets: dict,
     duration: float = 1.8,
     strum_delay: float = 0.035,
+    order: list | None = None,
     sample_rate: int = SAMPLE_RATE,
 ) -> np.ndarray:
-    """Mix the four strings of a chord into one waveform, staggered like a strum."""
+    """Mix the four strings of a chord into one waveform, staggered like a strum.
+
+    ``order`` controls the direction the strings are swept — the default is a
+    downstroke (G→A); reverse it for an upstroke.
+    """
     total = int(sample_rate * duration)
     mix = np.zeros(total, dtype=np.float32)
+    sweep = order or STRING_ORDER
 
-    for i, string in enumerate(STRING_ORDER):
+    for i, string in enumerate(sweep):
         fret = frets.get(string)
         if fret is None:  # muted string
             continue
@@ -90,6 +96,16 @@ def to_wav_bytes(samples: np.ndarray, sample_rate: int = SAMPLE_RATE) -> bytes:
 def chord_wav(frets: dict) -> bytes:
     """Convenience: synthesize a chord straight to WAV bytes."""
     return to_wav_bytes(chord_samples(frets))
+
+
+def strum_samples(frets: dict, direction: str = "D", duration: float = 0.6) -> np.ndarray:
+    """A short single strum of a chord; upstroke sweeps the strings in reverse."""
+    order = STRING_ORDER if direction == "D" else list(reversed(STRING_ORDER))
+    return chord_samples(frets, duration=duration, strum_delay=0.018, order=order)
+
+
+def strum_wav(frets: dict, direction: str = "D") -> bytes:
+    return to_wav_bytes(strum_samples(frets, direction))
 
 
 def metronome_click(

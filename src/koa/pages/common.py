@@ -1,6 +1,11 @@
 from nicegui import ui
 
-_NAV = [("Chord Library", "/"), ("Switching Trainer", "/switching")]
+_NAV = [
+    ("Chord Library", "/"),
+    ("Switching Trainer", "/switching"),
+    ("Strumming Trainer", "/strumming"),
+    ("Dashboard", "/dashboard"),
+]
 
 
 def page_header(active_path: str) -> None:

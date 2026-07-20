@@ -5,7 +5,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 import pytest
 
-from koa.data.drills import DRILLS, drill_key
+from koa.data.drills import DRILLS, drill_key, drill_labels
 from koa.metronome import interval_seconds, switches_per_minute
 
 
@@ -38,3 +38,9 @@ def test_beginner_pairs_present():
     labels = {d["label"] for d in DRILLS}
     for expected in ["C ↔ Am", "C ↔ F", "Am ↔ F", "G ↔ Em"]:
         assert expected in labels
+
+
+def test_drill_labels_map_keys_to_labels():
+    labels = drill_labels()
+    assert labels[drill_key(["C", "Am"])] == "C ↔ Am"
+    assert labels[drill_key(["C", "Am", "F"])] == "C – Am – F"
