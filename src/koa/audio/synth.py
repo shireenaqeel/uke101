@@ -90,3 +90,18 @@ def to_wav_bytes(samples: np.ndarray, sample_rate: int = SAMPLE_RATE) -> bytes:
 def chord_wav(frets: dict) -> bytes:
     """Convenience: synthesize a chord straight to WAV bytes."""
     return to_wav_bytes(chord_samples(frets))
+
+
+def metronome_click(
+    accent: bool = False, duration: float = 0.05, sample_rate: int = SAMPLE_RATE
+) -> np.ndarray:
+    """A short, sharp tick — higher pitch for the accented (downbeat) click."""
+    n = int(sample_rate * duration)
+    t = np.linspace(0.0, duration, n, endpoint=False)
+    freq = 1600.0 if accent else 1000.0
+    tone = np.sin(2 * np.pi * freq * t) * np.exp(-35.0 * t)
+    return tone.astype(np.float32)
+
+
+def metronome_wav(accent: bool = False) -> bytes:
+    return to_wav_bytes(metronome_click(accent))

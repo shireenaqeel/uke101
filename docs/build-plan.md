@@ -8,8 +8,8 @@ Each phase is a shippable checkpoint. We confirm a phase works before starting t
 |---|---|---|
 | 0 | Repo scaffold: venv, structure, runnable NiceGUI landing page, tests | ✅ done |
 | 1 | Chord Library: chord data set, data-driven fretboard renderer, audio pluck synth, browse + "mark learned" | ✅ done |
-| 2 | Chord Switching Trainer: metronome engine, 2-chord drills, switch-speed tracking per pair | ⬜ next |
-| 3 | Strumming Pattern Trainer + Progress Dashboard | ⬜ |
+| 2 | Chord Switching Trainer: metronome engine, 2-chord drills, switch-speed tracking per pair | ✅ done |
+| 3 | Strumming Pattern Trainer + Progress Dashboard | ⬜ next |
 | 4 | Strum Arcade (scored rhythm game) | ⬜ |
 | 5 | Song Mode (scrolling lyrics + synced chords) | ⬜ |
 | 6 | Song Composer | ⬜ |

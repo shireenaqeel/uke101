@@ -10,8 +10,10 @@ def test_package_imports():
     assert koa.__version__
 
 
-def test_app_module_imports():
+def test_app_and_pages_import():
     from koa import app
+    from koa.pages import library, switching
 
-    assert hasattr(app, "build_library")
     assert hasattr(app, "main")
+    assert hasattr(library, "build_library")
+    assert hasattr(switching, "build_switching")

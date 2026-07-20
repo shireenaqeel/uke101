@@ -32,6 +32,17 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS switch_scores (
+                id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                drill_key        TEXT NOT NULL,
+                switches         INTEGER NOT NULL,
+                duration_seconds REAL NOT NULL,
+                recorded_at      TEXT NOT NULL DEFAULT (datetime('now'))
+            )
+            """
+        )
 
 
 def mark_learned(chord_id: str) -> None:
@@ -58,3 +69,41 @@ def get_learned() -> set[str]:
     with _connect() as conn:
         rows = conn.execute("SELECT chord_id FROM learned_chords").fetchall()
         return {row["chord_id"] for row in rows}
+
+
+def record_switch_score(drill_key: str, switches: int, duration_seconds: float) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT INTO switch_scores (drill_key, switches, duration_seconds) VALUES (?, ?, ?)",
+            (drill_key, switches, duration_seconds),
+        )
+
+
+def get_switch_best(drill_key: str) -> int | None:
+    """Best clean-switch count recorded for a drill, or None if never attempted."""
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT MAX(switches) AS best FROM switch_scores WHERE drill_key = ?", (drill_key,)
+        ).fetchone()
+        return row["best"] if row and row["best"] is not None else None
+
+
+def get_switch_history(drill_key: str, limit: int = 20) -> list[dict]:
+    with _connect() as conn:
+        rows = conn.execute(
+            """
+            SELECT switches, duration_seconds, recorded_at
+            FROM switch_scores WHERE drill_key = ?
+            ORDER BY recorded_at DESC LIMIT ?
+            """,
+            (drill_key, limit),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+
+def get_switch_bests() -> dict[str, int]:
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT drill_key, MAX(switches) AS best FROM switch_scores GROUP BY drill_key"
+        ).fetchall()
+        return {row["drill_key"]: row["best"] for row in rows}
