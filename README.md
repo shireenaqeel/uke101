@@ -50,4 +50,6 @@ pytest
 
 ## Status
 
-**Scaffold complete.** Runnable NiceGUI landing page, package structure, venv, and test harness are in place. Feature work follows the phased plan in [`docs/build-plan.md`](docs/build-plan.md), starting with Phase 1 (Chord Library). Each phase is a shippable checkpoint.
+**Phase 1 (Chord Library) complete.** 12 chords rendered from data as fretboard diagrams (`render_fretboard`), each playable via server-synthesized audio (`koa.audio.synth`) and markable as "learned" with state persisted to SQLite across reloads. 18 tests passing.
+
+Next: Phase 2 (Chord Switching Trainer). Full plan and status in [`docs/build-plan.md`](docs/build-plan.md); each phase is a shippable checkpoint.

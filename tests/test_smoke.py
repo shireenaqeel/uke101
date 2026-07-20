@@ -13,5 +13,5 @@ def test_package_imports():
 def test_app_module_imports():
     from koa import app
 
-    assert hasattr(app, "build_home")
+    assert hasattr(app, "build_library")
     assert hasattr(app, "main")
