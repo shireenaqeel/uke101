@@ -3,7 +3,7 @@ from nicegui import ui
 from koa import db
 from koa.data.chords import CHORDS
 from koa.data.drills import drill_labels
-from koa.data.patterns import STRUMMING_PATTERNS
+from koa.data.patterns import PATTERNS_BY_ID, STRUMMING_PATTERNS
 from koa.pages.common import page_header
 
 
@@ -12,6 +12,7 @@ def build_dashboard() -> None:
 
     learned = db.get_learned()
     switch_bests = db.get_switch_bests()
+    arcade_bests = db.get_arcade_bests()
     labels = drill_labels()
 
     with ui.column().classes("w-full max-w-4xl mx-auto items-stretch gap-6 p-6"):
@@ -54,6 +55,32 @@ def build_dashboard() -> None:
                 ui.label(
                     "No switching scores yet — try the Switching Trainer to start tracking."
                 ).classes("text-gray-500")
+
+        # --- strum arcade high scores ---------------------------------------
+        with ui.card().classes("w-full gap-3"):
+            ui.label("Strum Arcade — high scores").classes("text-xl font-semibold")
+            if arcade_bests:
+                rows = [
+                    {
+                        "pattern": PATTERNS_BY_ID[pid]["name"] if pid in PATTERNS_BY_ID else pid,
+                        "score": score,
+                    }
+                    for pid, score in sorted(
+                        arcade_bests.items(), key=lambda kv: kv[1], reverse=True
+                    )
+                ]
+                ui.table(
+                    columns=[
+                        {"name": "pattern", "label": "Pattern", "field": "pattern", "align": "left"},
+                        {"name": "score", "label": "High score", "field": "score"},
+                    ],
+                    rows=rows,
+                    row_key="pattern",
+                ).classes("w-full")
+            else:
+                ui.label("No arcade scores yet — play the Strum Arcade to set one.").classes(
+                    "text-gray-500"
+                )
 
         # --- strumming patterns ---------------------------------------------
         with ui.card().classes("w-full gap-2"):

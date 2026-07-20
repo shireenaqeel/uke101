@@ -57,3 +57,12 @@ def test_switch_history_and_bests(db):
     db.record_switch_score("C-F", 15, 60.0)
     assert len(db.get_switch_history("Am-C")) == 1
     assert db.get_switch_bests() == {"Am-C": 20, "C-F": 15}
+
+
+def test_arcade_best_and_bests(db):
+    assert db.get_arcade_best("island") is None
+    db.record_arcade_score("island", 1200, 14)
+    db.record_arcade_score("island", 1800, 20)
+    db.record_arcade_score("folk", 900, 8)
+    assert db.get_arcade_best("island") == 1800
+    assert db.get_arcade_bests() == {"island": 1800, "folk": 900}

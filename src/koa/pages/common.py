@@ -4,6 +4,7 @@ _NAV = [
     ("Chord Library", "/"),
     ("Switching Trainer", "/switching"),
     ("Strumming Trainer", "/strumming"),
+    ("Strum Arcade", "/arcade"),
     ("Dashboard", "/dashboard"),
 ]
 

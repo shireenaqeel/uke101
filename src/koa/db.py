@@ -43,6 +43,17 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS arcade_scores (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                pattern_id  TEXT NOT NULL,
+                score       INTEGER NOT NULL,
+                max_combo   INTEGER NOT NULL,
+                recorded_at TEXT NOT NULL DEFAULT (datetime('now'))
+            )
+            """
+        )
 
 
 def mark_learned(chord_id: str) -> None:
@@ -107,3 +118,27 @@ def get_switch_bests() -> dict[str, int]:
             "SELECT drill_key, MAX(switches) AS best FROM switch_scores GROUP BY drill_key"
         ).fetchall()
         return {row["drill_key"]: row["best"] for row in rows}
+
+
+def record_arcade_score(pattern_id: str, score: int, max_combo: int) -> None:
+    with _connect() as conn:
+        conn.execute(
+            "INSERT INTO arcade_scores (pattern_id, score, max_combo) VALUES (?, ?, ?)",
+            (pattern_id, score, max_combo),
+        )
+
+
+def get_arcade_best(pattern_id: str) -> int | None:
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT MAX(score) AS best FROM arcade_scores WHERE pattern_id = ?", (pattern_id,)
+        ).fetchone()
+        return row["best"] if row and row["best"] is not None else None
+
+
+def get_arcade_bests() -> dict[str, int]:
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT pattern_id, MAX(score) AS best FROM arcade_scores GROUP BY pattern_id"
+        ).fetchall()
+        return {row["pattern_id"]: row["best"] for row in rows}

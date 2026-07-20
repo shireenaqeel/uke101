@@ -1,6 +1,7 @@
 from nicegui import ui
 
 from koa import db
+from koa.pages.arcade import build_arcade
 from koa.pages.dashboard import build_dashboard
 from koa.pages.library import build_library
 from koa.pages.strumming import build_strumming
@@ -20,6 +21,11 @@ def switching() -> None:
 @ui.page("/strumming")
 def strumming() -> None:
     build_strumming()
+
+
+@ui.page("/arcade")
+def arcade() -> None:
+    build_arcade()
 
 
 @ui.page("/dashboard")
