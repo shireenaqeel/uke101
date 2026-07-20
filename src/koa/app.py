@@ -5,6 +5,7 @@ from koa.pages.arcade import build_arcade
 from koa.pages.coach import build_coach
 from koa.pages.composer import build_composer
 from koa.pages.dashboard import build_dashboard
+from koa.pages.home import build_home
 from koa.pages.library import build_library
 from koa.pages.listen import build_listen
 from koa.pages.notation import build_notation_home, build_notation_practice
@@ -15,6 +16,11 @@ from koa.pages.switching import build_switching
 
 @ui.page("/")
 def index() -> None:
+    build_home()
+
+
+@ui.page("/library")
+def library() -> None:
     build_library()
 
 

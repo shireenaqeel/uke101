@@ -158,6 +158,36 @@ SONGS = [
     },
 ]
 
+
+def _chart_song(song_id, title, artist, difficulty, tempo, progression, pattern="island"):
+    query = f"{title} {artist}".replace(" ", "%20")
+    return {
+        "id": song_id,
+        "title": title,
+        "artist": artist,
+        "difficulty": difficulty,
+        "tempo": tempo,
+        "chords_used": list(dict.fromkeys(progression)),
+        "strumming_pattern_id": pattern,
+        "lyrics_included": False,
+        "is_user_composed": False,
+        "source_url": f"https://www.ultimate-guitar.com/search.php?search_type=title&value={query}",
+        "progression": progression,
+        "lines": [],
+    }
+
+
+# Bollywood & pop hits as chord charts (lyrics are copyrighted — link out instead).
+SONGS += [
+    _chart_song("kal_ho_naa_ho", "Kal Ho Naa Ho", "Sonu Nigam", "medium", 90, ["C", "Em", "F", "G"]),
+    _chart_song("pehla_nasha", "Pehla Nasha", "Udit Narayan", "easy", 92, ["C", "Am", "F", "G"]),
+    _chart_song("sunshine", "Give Me Some Sunshine", "3 Idiots", "easy", 96, ["C", "G", "Am", "F"]),
+    _chart_song("ilahi", "Ilahi", "Arijit Singh", "medium", 108, ["G", "D", "Em", "C"]),
+    _chart_song("tum_hi_ho", "Tum Hi Ho", "Arijit Singh", "easy", 84, ["Am", "F", "C", "G"]),
+    _chart_song("perfect", "Perfect", "Ed Sheeran", "medium", 95, ["G", "Em", "C", "D"]),
+    _chart_song("let_it_be", "Let It Be", "The Beatles", "easy", 72, ["C", "G", "Am", "F"]),
+]
+
 SONGS_BY_ID = {s["id"]: s for s in SONGS}
 
 

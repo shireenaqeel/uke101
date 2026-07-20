@@ -47,7 +47,7 @@ def build_coach() -> None:
                                 ui.label(f"Used in {rec['songs_using']} songs").classes(
                                     "text-sm text-gray-500"
                                 )
-                ui.button("Open Chord Library", on_click=lambda: ui.navigate.to("/")).props(
+                ui.button("Open Chord Library", on_click=lambda: ui.navigate.to("/library")).props(
                     "outline size=sm"
                 )
             else:
@@ -92,7 +92,7 @@ def build_coach() -> None:
                     with ui.row().classes("w-full items-center justify-between"):
                         ui.label(f"{song['title']} — learn {item['missing']}")
                         ui.button(
-                            f"Learn {item['missing']}", on_click=lambda: ui.navigate.to("/")
+                            f"Learn {item['missing']}", on_click=lambda: ui.navigate.to("/library")
                         ).props("size=sm flat")
 
 

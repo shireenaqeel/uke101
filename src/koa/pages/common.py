@@ -1,13 +1,17 @@
 from nicegui import ui
 
+from koa import db, gamification
+from koa.pages.theme import apply_theme
+
 _NAV = [
-    ("Chord Library", "/"),
+    ("Home", "/"),
+    ("Chords", "/library"),
     ("Coach", "/coach"),
-    ("Switching Trainer", "/switching"),
-    ("Strumming Trainer", "/strumming"),
-    ("Strum Arcade", "/arcade"),
+    ("Switching", "/switching"),
+    ("Strumming", "/strumming"),
+    ("Arcade", "/arcade"),
     ("Songs", "/songs"),
-    ("Ear Trainer", "/listen"),
+    ("Ear", "/listen"),
     ("Compose", "/composer"),
     ("Notation", "/notation"),
     ("Dashboard", "/dashboard"),
@@ -15,11 +19,24 @@ _NAV = [
 
 
 def page_header(active_path: str) -> None:
-    with ui.row().classes("w-full max-w-6xl mx-auto items-center gap-6 p-4 border-b"):
-        ui.label("🎵 Koa").classes("text-xl font-bold")
-        for label, path in _NAV:
-            link = ui.link(label, path).classes("no-underline")
-            if path == active_path:
-                link.classes("text-primary font-bold")
-            else:
-                link.classes("text-gray-500")
+    apply_theme()
+
+    level = gamification.level_info(db.get_total_xp())
+    streak = db.get_streak()["current"]
+
+    with ui.row().classes(
+        "koa-nav w-full items-center gap-2 px-4 py-2 flex-wrap justify-between"
+    ):
+        with ui.row().classes("items-center gap-3 flex-wrap"):
+            ui.label("🎸 Koa").classes("koa-brand text-xl")
+            with ui.row().classes("items-center gap-1 flex-wrap"):
+                for label, path in _NAV:
+                    cls = "koa-navlink" + (" koa-navlink-active" if path == active_path else "")
+                    ui.link(label, path).classes(cls)
+        with ui.row().classes("items-center gap-2"):
+            ui.label(f"⭐ Lv {level['level']}").classes("koa-hud").style(
+                "background:linear-gradient(90deg,#7C5CFF,#9C7BFF)"
+            )
+            ui.label(f"🔥 {streak}").classes("koa-hud").style(
+                "background:linear-gradient(90deg,#FF8A00,#FF5CA8)"
+            )

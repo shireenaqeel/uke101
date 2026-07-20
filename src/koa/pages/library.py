@@ -45,7 +45,7 @@ def chord_card(chord: dict, learned: set[str], on_change) -> None:
 
 
 def build_library() -> None:
-    page_header("/")
+    page_header("/library")
     learned = db.get_learned()
 
     with ui.column().classes("w-full max-w-6xl mx-auto items-center gap-4 p-6"):
